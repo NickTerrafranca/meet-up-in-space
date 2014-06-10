@@ -30,6 +30,7 @@ def authenticate!
 end
 
 get '/' do
+
   erb :index
 end
 
