@@ -44,6 +44,8 @@ get '/auth/github/callback' do
   redirect '/'
 end
 
+
+
 get '/sign_out' do
   session[:user_id] = nil
   flash[:notice] = "You have been signed out."
