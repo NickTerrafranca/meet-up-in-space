@@ -319,6 +319,7 @@ input::-moz-focus-inner {
 
 input {
   line-height: normal;
+  color: black;
 }
 
 /**
@@ -422,4 +423,8 @@ table {
 td,
 th {
   padding: 0;
+}
+
+ul {
+  list-style-type: none;
 }
