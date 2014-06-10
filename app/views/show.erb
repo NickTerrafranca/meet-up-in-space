@@ -4,3 +4,8 @@
 <p>Description: <%= @selecting_meetup.description %></p>
 <p>Start Time: <%= @selecting_meetup.start_time %></p>
 <p>End Time: <%= @selecting_meetup.end_time %></p>
+
+<form action='/join_meetup' method='post'>
+  <input type='hidden' name='id' value="<%=@selecting_meetup.id%>" />
+  <input type='submit' value='Join'/>
+</form>

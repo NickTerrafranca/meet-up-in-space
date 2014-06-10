@@ -35,7 +35,7 @@ get '/meetups/:id' do
 end
 
 get '/' do
-  @title = Meetup.all
+  @title = Meetup.all.order(:name)
   erb :index
 end
 
@@ -45,11 +45,10 @@ get '/new_meetup' do
 end
 
 post '/create_meetup' do
-Meetup.create(name: params['name'], location: params['location'], description: params['description'], start_time: params['start'], end_time: params['end'])
-new_meet = Meetup.where(name: params['name']).first
-Attendance.create(user_id: session[:user_id], meetup_id: new_meet.id, member_type: 'Admin')
+  @meetup = Meetup.create(name: params['name'], location: params['location'], description: params['description'], start_time: params['start'], end_time: params['end'])
+  Attendance.create(user_id: session[:user_id], meetup_id: @meetup.id, member_type: 'Admin')
+  redirect "/meetups/#{@meetup.id}"
 end
-#make sure this is best practice
 
 get '/auth/github/callback' do
   auth = env['omniauth.auth']
@@ -61,7 +60,10 @@ get '/auth/github/callback' do
   redirect '/'
 end
 
-
+post '/join_meetup' do
+  new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
+  redirect "/meetups/#{new_attendance.meetup_id}"
+end
 
 get '/sign_out' do
   session[:user_id] = nil
