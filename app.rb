@@ -30,6 +30,7 @@ def authenticate!
 end
 
 get '/meetups/:id' do
+  @selecting_meetup = Meetup.where(id: "#{params[:id]}").take
   erb :show
 end
 
@@ -37,6 +38,18 @@ get '/' do
   @title = Meetup.all
   erb :index
 end
+
+get '/new_meetup' do
+
+  erb :create_meetup
+end
+
+post '/create_meetup' do
+Meetup.create(name: params['name'], location: params['location'], description: params['description'], start_time: params['start'], end_time: params['end'])
+new_meet = Meetup.where(name: params['name']).first
+Attendance.create(user_id: session[:user_id], meetup_id: new_meet.id, member_type: 'Admin')
+end
+#make sure this is best practice
 
 get '/auth/github/callback' do
   auth = env['omniauth.auth']
