@@ -29,8 +29,12 @@ def authenticate!
   end
 end
 
-get '/' do
+get '/meetups/:id' do
+  erb :show
+end
 
+get '/' do
+  @title = Meetup.all
   erb :index
 end
 
