@@ -90,7 +90,7 @@ end
 post '/join_meetup' do
   if signed_in?
     if member?(session[:user_id], params[:id])
-      new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
+      new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: "Admin")
       redirect "/meetups/#{params[:id]}"
     else
       flash[:notice] = "You are already a member!"
@@ -103,11 +103,21 @@ post '/join_meetup' do
 
 end
 
+post '/unsubscribe' do
+  if signed_in?
 
+    if member?(session[:user_id], params[:id]) == false
 
+      new_attendance = Attendance.delete_all(user_id: session[:user_id], meetup_id: params[:id])
 
-
-
-
-
+      redirect "/meetups/#{params[:id]}"
+    else
+      flash[:notice] = "You are already a member!"
+      redirect "/meetups/#{params[:id]}"
+    end
+  else
+    flash[:notice] = "You must be signed in to unsubscribe from a meet-up."
+    redirect "/meetups/#{params[:id]}"
+  end
+end
 
