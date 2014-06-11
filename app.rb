@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'sinatra/flash'
 require 'omniauth-github'
+require 'pry'
 
 require_relative 'config/application'
 
@@ -29,7 +30,7 @@ def authenticate!
   end
 end
 
-#################User Oriented###################
+################# User Oriented ###################
 
 get '/auth/github/callback' do
   auth = env['omniauth.auth']
@@ -48,7 +49,7 @@ get '/sign_out' do
   redirect '/'
 end
 
-##############None User Oriented##############
+############## None User Oriented ##############
 
 get '/' do
   @title = Meetup.all.order(:name)
@@ -56,7 +57,8 @@ get '/' do
 end
 
 get '/meetups/:id' do
-  @selecting_meetup = Meetup.where(id: "#{params[:id]}").take
+  @selecting_meetup = Meetup.where(id: "#{params[:id]}").first
+  @users = @selecting_meetup.users
   erb :show
 end
 
@@ -65,7 +67,7 @@ get '/new_meetup' do
   erb :create_meetup
 end
 
-##################Posts#########################
+################## Posts #########################
 
 post '/create_meetup' do
   authenticate!
@@ -77,6 +79,8 @@ end
 
 post '/join_meetup' do
   authenticate!
+  # if Attendance.where(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest') == nil
+  #   flash[:notice] =
   new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
   flash[:notice] = "You joined this group!"
   redirect "/meetups/#{new_attendance.meetup_id}"

@@ -9,3 +9,13 @@
   <input type='hidden' name='id' value="<%=@selecting_meetup.id%>" />
   <input type='submit' value='Join'/>
 </form>
+<br/>
+
+<h3>Members</h3>
+
+<ul>
+  <%@users.each do |user|%>
+  <li><%=user.username%><br/><img src=<%="#{user.avatar_url}"%>></li>
+  <br/>
+  <%end%>
+</ul>

@@ -428,3 +428,8 @@ th {
 ul {
   list-style-type: none;
 }
+
+ul img {
+  height: 80px;
+  width: 80px;
+}
