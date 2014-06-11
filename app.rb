@@ -30,6 +30,17 @@ def authenticate!
   end
 end
 
+def check_attendance(user, meetup)
+  form = nil
+  check = Attendance.where(user_id: user, meetup_id: meetup).first
+  if check == nil
+    form = 'Join'
+  else
+    form = 'Leave'
+  end
+  form
+end
+
 ################# User Oriented ###################
 
 get '/auth/github/callback' do
@@ -59,6 +70,7 @@ end
 get '/meetups/:id' do
   @selecting_meetup = Meetup.where(id: "#{params[:id]}").first
   @users = @selecting_meetup.users
+  @button = check_attendance(session[:user_id], params[:id])
   erb :show
 end
 
@@ -77,13 +89,17 @@ post '/create_meetup' do
   redirect "/meetups/#{@meetup.id}"
 end
 
-post '/join_meetup' do
+post '/join_meetup/:id' do
   authenticate!
-  # if Attendance.where(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest') == nil
-  #   flash[:notice] =
-  new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
-  flash[:notice] = "You joined this group!"
-  redirect "/meetups/#{new_attendance.meetup_id}"
+  if params.has_key?('Join')
+    new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params['Join'], member_type: 'Guest')
+    flash[:notice] = "You joined this group!"
+    redirect "/meetups/#{new_attendance.meetup_id}"
+  else
+    Attendance.destroy_all("user_id = #{session[:user_id]} AND meetup_id = #{params['Leave']}")
+    flash[:notice] = "You left this group!"
+    redirect "/meetups/#{params[:id]}"
+  end
 end
 
 

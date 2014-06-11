@@ -5,9 +5,9 @@
 <p>Start Time: <%= @selecting_meetup.start_time %></p>
 <p>End Time: <%= @selecting_meetup.end_time %></p>
 
-<form action='/join_meetup' method='post'>
-  <input type='hidden' name='id' value="<%=@selecting_meetup.id%>" />
-  <input type='submit' value='Join'/>
+<form action='/join_meetup/<%="#{@selecting_meetup.id}"%>' method='post'>
+  <input type='hidden' name="<%=@button%>" value="<%=@selecting_meetup.id%>" />
+  <input type='submit' value="<%=@button%>"/>
 </form>
 <br/>
 
@@ -15,7 +15,7 @@
 
 <ul>
   <%@users.each do |user|%>
-  <li><%=user.username%><br/><img src=<%="#{user.avatar_url}"%>></li>
+  <li><%=user.attendances.where(meetup_id: @selecting_meetup.id).first.member_type%><br/><img src=<%="#{user.avatar_url}"%>><br/><%=user.username%></li>
   <br/>
   <%end%>
 </ul>
