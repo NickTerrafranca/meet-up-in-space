@@ -1,4 +1,4 @@
-qclass CreateUsers < ActiveRecord::Migration
+class CreateUsers < ActiveRecord::Migration
   def change
     create_table :users do |table|
       table.string :provider, null: false

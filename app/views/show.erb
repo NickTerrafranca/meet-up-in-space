@@ -1,28 +1,54 @@
-<h3><%= @selecting_meetup.name %></h3>
+<div class="meetup-description">
+  <h3><%= @selecting_meetup.name %></h3>
 
-<p>Location: <%= @selecting_meetup.location %></p>
-<p>Description: <%= @selecting_meetup.description %></p>
-<p>Start Time: <%= @selecting_meetup.start_time %></p>
-<p>End Time: <%= @selecting_meetup.end_time %></p>
+  <p>Location: <%= @selecting_meetup.location %></p>
+  <p>Description: <%= @selecting_meetup.description %></p>
+  <p>Start Time: <%= @selecting_meetup.start_time %></p>
+  <p>End Time: <%= @selecting_meetup.end_time %></p>
 
-<form action='/join_meetup' method='post'>
-  <input type='hidden' name='id' value="<%= @selecting_meetup.id %>" />
-  <input type='submit' value='Join'/>
-</form>
+  <form action='/join_meetup' method='post'>
+    <input type='hidden' name='id' value="<%= @selecting_meetup.id %>" />
+    <input type='submit' value='Join'/>
+  </form>
 
 
-<form action='/unsubscribe' method="post">
-  <input type='hidden' name='id' value="<%= @selecting_meetup.id %>" />
-  <input type="submit" value="Unsubscribe" />
-</form>
+  <form action='/unsubscribe' method="post">
+    <input type='hidden' name='id' value="<%= @selecting_meetup.id %>" />
+    <input type="submit" value="Unsubscribe" />
+  </form>
+  <br/>
+</div>
 
-<ul>
-<% @users.each do |user| %>
-  <li>
-    <%= user.username %>
+<div class="members-box">
+  <ul>
+  <% @users.each do |user| %>
+    <li>
+      <%= user.username %>
+      <br>
+      <img src="<%= user.avatar_url %>" width="150" height="150">
+    </li>
     <br>
-    <img src="<%= user.avatar_url %>" width="150" height="150">
-  </li>
-  <br>
-<%end%>
-</ul>
+  <%end%>
+  </ul>
+</div>
+
+<div id="comment-box">
+<h3>Comments:</h3>
+  <ul>
+  <%@comments.each do |comment|%>
+    <li>
+      <%= comment.user.username %>
+      <br>
+      <div id="comment">
+        <%= comment.content %>
+      </div>
+    </li>
+    <%end%>
+  </ul>
+
+  <form id='text-box' action="/new_comment/<%= "#{params[:id]}" %>" method="post">
+    <textarea name='comment' cols='50' rows='5' placeholder="Comment"></textarea>
+    <br>
+    <input type="submit" value="Comment">
+  </form>
+</div>
