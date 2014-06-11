@@ -29,8 +29,38 @@ def authenticate!
   end
 end
 
+
+get '/sign_out' do
+  session[:user_id] = nil
+  flash[:notice] = "You have been signed out."
+
+  redirect '/'
+end
+
+get '/example_protected_page' do
+  authenticate!
+end
+
+get '/auth/github/callback' do
+  auth = env['omniauth.auth']
+
+  user = User.find_or_create_from_omniauth(auth)
+  set_current_user(user)
+  flash[:notice] = "You're now signed in as #{user.username}!"
+
+  redirect '/'
+end
+
+#All us!************************************
+# get requests ###########################
+
+def member?(user_id, meetup_id)
+  Attendance.where(user_id: user_id, meetup_id: meetup_id).empty?
+end
+
 get '/meetups/:id' do
   @selecting_meetup = Meetup.where(id: "#{params[:id]}").take
+  @users = @selecting_meetup.users
   erb :show
 end
 
@@ -44,34 +74,40 @@ get '/new_meetup' do
   erb :create_meetup
 end
 
+#post requests
+
 post '/create_meetup' do
-  @meetup = Meetup.create(name: params['name'], location: params['location'], description: params['description'], start_time: params['start'], end_time: params['end'])
-  Attendance.create(user_id: session[:user_id], meetup_id: @meetup.id, member_type: 'Admin')
-  redirect "/meetups/#{@meetup.id}"
-end
-
-get '/auth/github/callback' do
-  auth = env['omniauth.auth']
-
-  user = User.find_or_create_from_omniauth(auth)
-  set_current_user(user)
-  flash[:notice] = "You're now signed in as #{user.username}!"
-
-  redirect '/'
+  if signed_in?
+    @meetup = Meetup.create(name: params['name'], location: params['location'], description: params['description'], start_time: params['start'], end_time: params['end'])
+    Attendance.create(user_id: session[:user_id], meetup_id: @meetup.id, member_type: 'Admin')
+    redirect "/meetups/#{@meetup.id}"
+  else
+    flash[:notice] = "You must be signed in to create a meet up."
+    redirect '/'
+  end
 end
 
 post '/join_meetup' do
-  new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
-  redirect "/meetups/#{new_attendance.meetup_id}"
+  if signed_in?
+    if member?(session[:user_id], params[:id])
+      new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
+      redirect "/meetups/#{params[:id]}"
+    else
+      flash[:notice] = "You are already a member!"
+      redirect "/meetups/#{params[:id]}"
+    end
+  else
+    flash[:notice] = "You must be signed in to join a meet-up."
+    redirect "/meetups/#{params[:id]}"
+  end
+
 end
 
-get '/sign_out' do
-  session[:user_id] = nil
-  flash[:notice] = "You have been signed out."
 
-  redirect '/'
-end
 
-get '/example_protected_page' do
-  authenticate!
-end
+
+
+
+
+
+
