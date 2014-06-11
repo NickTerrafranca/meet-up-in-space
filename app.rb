@@ -47,6 +47,7 @@ end
 post '/create_meetup' do
   @meetup = Meetup.create(name: params['name'], location: params['location'], description: params['description'], start_time: params['start'], end_time: params['end'])
   Attendance.create(user_id: session[:user_id], meetup_id: @meetup.id, member_type: 'Admin')
+  flash[:notice] = "You created a new meetup called #{@meetup.name}!"
   redirect "/meetups/#{@meetup.id}"
 end
 
@@ -62,6 +63,7 @@ end
 
 post '/join_meetup' do
   new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
+  flash[:notice] = "You joined this group!"
   redirect "/meetups/#{new_attendance.meetup_id}"
 end
 
