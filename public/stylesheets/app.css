@@ -38,3 +38,49 @@ a:visited {
   padding: 1em;
   background-color: #3B9089;
 }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+td,
+th {
+  padding: 0;
+}
+
+ul {
+  list-style-type: none;
+}
+textarea {
+  color: #000000;
+}
+
+#text-box {
+  text-align: center;
+}
+#comment{
+  font-size: 14px;
+  margin-left: 20px;
+  color: #AEA9A9;
+
+}
+
+.members-box {
+  width: 10px;
+  float: left;
+}
+
+.meetup-description {
+  width: 100%;
+  height: 50%;
+}
+
+#comment-box {
+  width: 65%;
+  float: right;
+  background-color: #57565C;
+  padding: 20px;
+  height: 100%;
+  padding-bottom: 100px;
+}
