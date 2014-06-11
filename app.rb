@@ -29,27 +29,7 @@ def authenticate!
   end
 end
 
-get '/meetups/:id' do
-  @selecting_meetup = Meetup.where(id: "#{params[:id]}").take
-  erb :show
-end
-
-get '/' do
-  @title = Meetup.all.order(:name)
-  erb :index
-end
-
-get '/new_meetup' do
-
-  erb :create_meetup
-end
-
-post '/create_meetup' do
-  @meetup = Meetup.create(name: params['name'], location: params['location'], description: params['description'], start_time: params['start'], end_time: params['end'])
-  Attendance.create(user_id: session[:user_id], meetup_id: @meetup.id, member_type: 'Admin')
-  flash[:notice] = "You created a new meetup called #{@meetup.name}!"
-  redirect "/meetups/#{@meetup.id}"
-end
+#################User Oriented###################
 
 get '/auth/github/callback' do
   auth = env['omniauth.auth']
@@ -61,12 +41,6 @@ get '/auth/github/callback' do
   redirect '/'
 end
 
-post '/join_meetup' do
-  new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
-  flash[:notice] = "You joined this group!"
-  redirect "/meetups/#{new_attendance.meetup_id}"
-end
-
 get '/sign_out' do
   session[:user_id] = nil
   flash[:notice] = "You have been signed out."
@@ -74,6 +48,40 @@ get '/sign_out' do
   redirect '/'
 end
 
-get '/example_protected_page' do
-  authenticate!
+##############None User Oriented##############
+
+get '/' do
+  @title = Meetup.all.order(:name)
+  erb :index
 end
+
+get '/meetups/:id' do
+  @selecting_meetup = Meetup.where(id: "#{params[:id]}").take
+  erb :show
+end
+
+get '/new_meetup' do
+
+  erb :create_meetup
+end
+
+##################Posts#########################
+
+post '/create_meetup' do
+  authenticate!
+  @meetup = Meetup.create(name: params['name'], location: params['location'], description: params['description'], start_time: params['start'], end_time: params['end'])
+  Attendance.create(user_id: session[:user_id], meetup_id: @meetup.id, member_type: 'Admin')
+  flash[:notice] = "You created a new meetup called #{@meetup.name}!"
+  redirect "/meetups/#{@meetup.id}"
+end
+
+post '/join_meetup' do
+  authenticate!
+  new_attendance = Attendance.create(user_id: session[:user_id], meetup_id: params[:id], member_type: 'Guest')
+  flash[:notice] = "You joined this group!"
+  redirect "/meetups/#{new_attendance.meetup_id}"
+end
+
+
+
+
