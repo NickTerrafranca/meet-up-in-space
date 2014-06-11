@@ -61,6 +61,7 @@ end
 get '/meetups/:id' do
   @selecting_meetup = Meetup.where(id: "#{params[:id]}").take
   @users = @selecting_meetup.users
+  @comments = @selecting_meetup.comments
   erb :show
 end
 
@@ -121,3 +122,8 @@ post '/unsubscribe' do
   end
 end
 
+post '/new_comment/:id' do
+  @comment = Comment.create(user_id: session[:user_id],meetup_id: params[:id],content: params[:comment])
+
+  redirect "/meetups/#{params[:id]}"
+end
