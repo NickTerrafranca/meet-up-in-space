@@ -54,10 +54,13 @@ ul {
 }
 textarea {
   color: #000000;
+  margin-bottom: -7px;
 }
 
 #text-box {
-  text-align: center;
+  text-align: left;
+  margin-bottom: 20px;
+  margin-left: 40px;
 }
 #comment{
   font-size: 14px;
@@ -83,4 +86,6 @@ textarea {
   padding: 20px;
   height: 100%;
   padding-bottom: 100px;
+  position: relative;
+  margin-bottom: 0;
 }
